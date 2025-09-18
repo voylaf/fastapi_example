@@ -1,0 +1,14 @@
+[tool.black]
+line-length = 100           # длина строки
+skip-string-normalization = true  # не трогать кавычки
+target-version = ["py313"]  # версия Python
+include = '\.pyi?$'         # форматировать только .py и .pyi
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.venv
+  | build
+  | dist
+)/
+'''

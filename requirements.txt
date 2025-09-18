@@ -1,0 +1,14 @@
+pydantic
+email-validator
+pydantic-settings
+starlette
+fastapi
+uvicorn[standart]
+sqlalchemy
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+pytest
+httpx
+regex
+python-multipart
