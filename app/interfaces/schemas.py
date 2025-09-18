@@ -10,10 +10,16 @@ from regex import regex
 
 
 class ItemCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: Annotated[str, Field(max_length=127), "Maximal length of name is 127 symbols."]
     price: float
-    tax: Optional[float] = None
+    tax: Optional[float]
+    description: Annotated[
+        Optional[str], Field(max_length=1023), "Maximal length of description is 1023 symbols."
+    ] = None
+    price: Annotated[float, Field(gt=-10e9, lt=10e15), "Price is between -10e9 and 10e15."]
+    tax: Annotated[
+        Optional[float], Field(gt=-100, lt=10e6), "Tax is between -100 and 10e6 percentage."
+    ] = None
 
 
 class ItemResponse(ItemCreate):
@@ -42,7 +48,9 @@ class UserCreate(BaseModel):
         Field(
             min_length=12,
             max_length=128,
-            pattern=regex.compile(r"""^[\p{L}0-9~!?@#$%^&*_\-+()\[\]{}></|\"'.,:;]{12,128}$""").pattern,
+            pattern=regex.compile(
+                r"""^[\p{L}0-9~!?@#$%^&*_\-+()\[\]{}></|\"'.,:;]{12,128}$"""
+            ).pattern,
         ),
         """Minimal length of password is between 12 and 128 symbols. It may contain letters, numbers and special characters: ~!?@#$%^&*_-+"'()[]{}></|.,:;""",
     ]
