@@ -1,3 +1,30 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project"
+version = "0.1.0"
+dependencies = [
+    "pydantic",
+    "email-validator",
+    "pydantic-settings",
+    "starlette",
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "bcrypt",
+    "pytest",
+    "httpx",
+    "regex",
+    "python-multipart",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.black]
 line-length = 100           # длина строки
 skip-string-normalization = true  # не трогать кавычки
@@ -12,3 +39,6 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

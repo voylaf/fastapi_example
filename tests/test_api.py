@@ -1,16 +1,16 @@
-from app.interfaces.schemas import UserCreate
+from src.app.interfaces.schemas import UserCreate
 
 
 def test_create_and_list_items_without_authorization(client):
     payload = {"name": "Mouse", "description": "Wireless mouse", "price": 50.0, "tax": 5.0}
-
+    # assert settings.SECRET_KEY == "tests-secret"
     # POST /items
     response = client.post("/items", json=payload)
     assert response.status_code == 401
 
     # GET /items
     response = client.get("/items")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.text
     items = response.json()
     assert len(items) == 0
 

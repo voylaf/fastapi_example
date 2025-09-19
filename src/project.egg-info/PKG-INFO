@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: project
+Version: 0.1.0
+Requires-Dist: pydantic
+Requires-Dist: email-validator
+Requires-Dist: pydantic-settings
+Requires-Dist: starlette
+Requires-Dist: fastapi
+Requires-Dist: uvicorn[standart]
+Requires-Dist: sqlalchemy
+Requires-Dist: python-jose[cryptography]
+Requires-Dist: passlib[bcrypt]
+Requires-Dist: bcrypt
+Requires-Dist: pytest
+Requires-Dist: httpx
+Requires-Dist: regex
+Requires-Dist: python-multipart

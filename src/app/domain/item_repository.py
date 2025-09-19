@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple
 from uuid import UUID
 
-from .item import Item
-from ..infrastructure.models import ItemORM
+from src.app.domain.item import Item
+from src.app.infrastructure.models import ItemORM
 
 
 class ItemRepository(ABC):

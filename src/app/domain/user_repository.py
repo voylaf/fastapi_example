@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple
 
-from ..infrastructure.models import UserORM
-from ..interfaces.schemas import UserCreate
+from src.app.infrastructure.models import UserORM
+from src.app.interfaces.schemas import UserCreate
 
 
 class UserRepository(ABC):

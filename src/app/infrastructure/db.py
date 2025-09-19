@@ -1,8 +1,9 @@
-from typing import Optional
-
+from fastapi import Depends
 from sqlalchemy import create_engine, NullPool
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.orm import registry
+
+from src.config import Settings, get_settings
 
 mapper_registry = registry()
 Base = mapper_registry.generate_base()
@@ -13,11 +14,15 @@ def get_session_factory(engine) -> sessionmaker[Session]:
 
 
 class Database:
+
     def __init__(
-        self, url: str, echo: bool = False, connect_args: Optional[dict] = None, pool_class=NullPool
+        self,
+        settings: Settings,
+        echo: bool = False,
+        pool_class=NullPool,
     ):
         self.engine = create_engine(
-            url, echo=echo, connect_args=connect_args or {}, poolclass=pool_class
+            settings.DATABASE_URL, echo=echo, connect_args=settings.connect_args or {}, poolclass=pool_class
         )
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         self.Base = Base
@@ -39,11 +44,11 @@ class Database:
         return self.SessionLocal()
 
 
-default_db = Database(
-    url="sqlite:///./test.db",
-    connect_args={"check_same_thread": False},
-)
+# default_db = Database(
+#     settings=get_settings(),
+# )
 
 
-def get_db():
-    return default_db.get_db()
+def get_db(settings: Settings=Depends(get_settings)):
+    db = Database(settings=settings)
+    return db.get_db()

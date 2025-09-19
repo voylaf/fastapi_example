@@ -2,10 +2,10 @@ from typing import Tuple, Optional, List
 
 from pydantic import EmailStr
 
-from app.domain.user_repository import UserRepository
-from app.infrastructure.models import UserORM
-from ..domain.user import User
-from ..interfaces.schemas import UserCreate
+from src.app.domain.user_repository import UserRepository
+from src.app.infrastructure.models import UserORM
+from src.app.domain.user import User
+from src.app.interfaces.schemas import UserCreate
 
 
 class UserService:

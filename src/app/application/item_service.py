@@ -1,9 +1,9 @@
 from typing import List, Tuple, Optional
 from uuid import UUID
 
-from ..domain.item import Item
-from ..domain.item_repository import ItemRepository
-from ..infrastructure.models import ItemORM
+from src.app.domain.item import Item
+from src.app.domain.item_repository import ItemRepository
+from src.app.infrastructure.models import ItemORM
 
 
 class ItemService:

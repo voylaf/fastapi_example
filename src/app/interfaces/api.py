@@ -5,15 +5,16 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette import status
 
-from ..application.auth import create_access_token
-from ..application.deps import get_current_user
-from ..application.item_service import ItemService
-from ..application.user_service import UserService
-from ..infrastructure.db import get_db
-from ..infrastructure.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
-from .schemas import ItemCreate, ItemResponse, UserResponse, UserCreate
-from ..infrastructure.models import UserORM
-from ..infrastructure.user_repository_sqlalchemy import UserRepositorySQLAlchemy
+from config import Settings, get_settings
+from src.app.application.auth import create_access_token
+from src.app.application.deps import get_current_user
+from src.app.application.item_service import ItemService
+from src.app.application.user_service import UserService
+from src.app.infrastructure.db import get_db
+from src.app.infrastructure.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
+from src.app.interfaces.schemas import ItemCreate, ItemResponse, UserResponse, UserCreate
+from src.app.infrastructure.models import UserORM
+from src.app.infrastructure.user_repository_sqlalchemy import UserRepositorySQLAlchemy
 
 router = APIRouter()
 
@@ -46,7 +47,8 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/auth/login", response_model=Dict)
-def authenticate_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def authenticate_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db),
+                      settings: Settings = Depends(get_settings)):
     repo = UserRepositorySQLAlchemy(db)
     service = UserService(repo)
     user: UserORM = service.authenticate_user(form_data.username, form_data.password)
@@ -56,5 +58,5 @@ def authenticate_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Sess
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token = create_access_token(data={"sub": str(user.id)})
+    access_token = create_access_token(data={"sub": str(user.id)}, settings=settings)
     return {"access_token": access_token, "token_type": "bearer"}

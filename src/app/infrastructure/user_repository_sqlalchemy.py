@@ -3,12 +3,12 @@ from typing import cast, Optional, List
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import Session
 
-from . import models
-from .models import UserORM
-from ..application.auth import get_password_hash
-from ..domain.user_repository import UserRepository
-from ..interfaces import schemas
-from ..application.auth import verify_password
+from src.app.infrastructure import models
+from src.app.infrastructure.models import UserORM
+from src.app.application.auth import get_password_hash
+from src.app.domain.user_repository import UserRepository
+from src.app.interfaces import schemas
+from src.app.application.auth import verify_password
 
 
 class UserRepositorySQLAlchemy(UserRepository):
