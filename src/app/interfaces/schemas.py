@@ -16,9 +16,9 @@ class ItemCreate(BaseModel):
     description: Annotated[
         Optional[str], Field(max_length=1023), "Maximal length of description is 1023 symbols."
     ] = None
-    price: Annotated[float, Field(gt=-10e9, lt=10e15), "Price is between -10e9 and 10e15."]
+    price: Annotated[float, Field(gt=-1e9, lt=1e10), "Price is between -10e9 and 10e15."]
     tax: Annotated[
-        Optional[float], Field(gt=-100, lt=10e6), "Tax is between -100 and 10e6 percentage."
+        Optional[float], Field(gt=-100, lt=1e5), "Tax is between -100 and 10e6 percentage."
     ] = None
 
 
@@ -39,7 +39,7 @@ class UserCreate(BaseModel):
     full_name: Optional[str] = (
         Annotated[
             str,
-            Field(pattern="^[\p{L}0-9~!?@#$%^&*_\-+()\[\]{}></'|.,:; ]*$"),
+            Field(pattern=r"^[\p{L}0-9~!?@#$%^&*_\-+()\[\]{}></'|.,:; ]*$"),
         ]
         | None
     )

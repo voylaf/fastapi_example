@@ -16,7 +16,13 @@ class ItemRepositorySQLAlchemy(ItemRepository):
         self.db = db
 
     def add(self, item: Item, owner_id: UUID) -> Tuple[UUID, ItemORM]:
-        orm = ItemORM(name=item.name, price=item.price, tax=item.tax, owner_id=owner_id)
+        orm = ItemORM(
+            name=item.name,
+            price=item.price,
+            tax=item.tax,
+            description=item.description,
+            owner_id=owner_id,
+        )
         self.db.add(orm)
         self.db.commit()
         self.db.refresh(orm)

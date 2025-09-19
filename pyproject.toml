@@ -20,6 +20,7 @@ dependencies = [
     "httpx",
     "regex",
     "python-multipart",
+    "hypothesis",
 ]
 
 [tool.setuptools.packages.find]
