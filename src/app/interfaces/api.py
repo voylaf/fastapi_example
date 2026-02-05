@@ -1,4 +1,5 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -13,45 +14,53 @@ from src.app.application.user_service import UserService
 from src.app.infrastructure.db import get_db
 from src.app.infrastructure.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
 from src.app.interfaces.schemas import ItemCreate, ItemResponse, UserResponse, UserCreate
-from src.app.infrastructure.models import UserORM
+from src.app.infrastructure.models import UserORM, ItemORM
 from src.app.infrastructure.user_repository_sqlalchemy import UserRepositorySQLAlchemy
 
 router = APIRouter()
 
 
 @router.post("/items", response_model=ItemResponse)
-def create_item(
+async def create_item(
     item: ItemCreate,
     db: Session = Depends(get_db),
     current_user: UserORM = Depends(get_current_user),
-):
+) -> ItemResponse:
     repo = ItemRepositorySQLAlchemy(db)
     service = ItemService(repo)
     owner_id = current_user.id
-    item_id, new_item = service.create_item(item.name, item.price, item.tax, owner_id)
+    item_with_id: Tuple[UUID, ItemORM] = await service.create_item(
+        item.name, item.price, item.tax, owner_id
+    )
+    item_id, new_item = item_with_id
     return ItemResponse(id=item_id, owner_id=owner_id, **item.model_dump())
 
 
 @router.get("/items", response_model=List[ItemResponse])
-def get_items(db: Session = Depends(get_db)):
+async def get_items(db: Session = Depends(get_db)) -> List[ItemORM]:
     repo = ItemRepositorySQLAlchemy(db)
     service = ItemService(repo)
-    return service.list_items()
+    items = await service.list_items()
+    return items
 
 
 @router.post("/auth/register", response_model=UserResponse)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+async def create_user(user: UserCreate, db: Session = Depends(get_db)) -> Tuple[str, UserORM]:
     repo = UserRepositorySQLAlchemy(db)
     service = UserService(repo)
-    return service.create_user(user.email, user.password, user.full_name, user.role)
+    result = await service.create_user(user.email, user.password, user.full_name, user.role)
+    return result
 
 
 @router.post("/auth/login", response_model=Dict)
-def authenticate_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db),
-                      settings: Settings = Depends(get_settings)):
+async def authenticate_user(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+):
     repo = UserRepositorySQLAlchemy(db)
     service = UserService(repo)
-    user: UserORM = service.authenticate_user(form_data.username, form_data.password)
+    user: UserORM = await service.authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
