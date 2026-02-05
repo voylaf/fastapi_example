@@ -5,7 +5,6 @@ from fastapi.testclient import TestClient
 from sqlalchemy import StaticPool
 from sqlalchemy.orm import Session
 
-from src.app.infrastructure.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
 from src.app.infrastructure.db import Database, get_db
 from src.app.infrastructure.models import UserORM
 from src.config import Settings, get_settings
@@ -68,3 +67,19 @@ def test_settings(monkeypatch):
 
     # можно создавать отдельный экземпляр Settings
     return Settings()
+
+
+@pytest.fixture(scope="function")
+def auth_token(user_factory, client):
+    email = "aa@g.com"
+    password = "lkjsaoiwhghb%iog535bajb"
+    full_name = "I'm the best user!"
+
+    _ = user_factory(email, password, full_name)
+    response = client.post("/auth/login", data={"username": email, "password": password})
+    return response.json()
+
+@pytest.fixture(scope="function")
+def auth_headers(auth_token, client):
+    token = auth_token["access_token"]
+    return {"Authorization": f"Bearer {token}"}
