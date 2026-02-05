@@ -3,8 +3,10 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "project"
-version = "0.1.0"
+name = "fastapi_example"
+description = 'fastapi example project'
+authors = [{name = 'voylaf'}]
+requires-python = ">=3.14"
 dependencies = [
     "pydantic",
     "email-validator",
@@ -15,12 +17,13 @@ dependencies = [
     "sqlalchemy",
     "python-jose[cryptography]",
     "passlib[bcrypt]",
-    "bcrypt",
+    "bcrypt==4.3.0",
     "pytest",
     "httpx",
     "regex",
     "python-multipart",
     "hypothesis",
+    "black (>=26.1.0,<27.0.0)",
 ]
 
 [tool.setuptools.packages.find]
@@ -29,7 +32,7 @@ where = ["src"]
 [tool.black]
 line-length = 100           # длина строки
 skip-string-normalization = true  # не трогать кавычки
-target-version = ["py313"]  # версия Python
+target-version = ["py314"]  # версия Python
 include = '\.pyi?$'         # форматировать только .py и .pyi
 exclude = '''
 /(
@@ -43,3 +46,6 @@ exclude = '''
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+[tool.poetry]
+package-mode = false
