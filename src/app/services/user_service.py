@@ -1,9 +1,7 @@
 from typing import Tuple, Optional, List
 
-from pydantic import EmailStr
-
-from src.app.domain.user_repository import UserRepository
-from src.app.infrastructure.models import UserORM
+from src.app.infrastructure.repositories.user_repository import UserRepository
+from src.app.infrastructure.models.user import UserORM
 from src.app.domain.user import User
 from src.app.interfaces.schemas import UserCreate
 

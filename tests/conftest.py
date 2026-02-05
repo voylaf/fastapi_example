@@ -5,8 +5,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import StaticPool
 from sqlalchemy.orm import Session
 
+from src.app.infrastructure.models.user import UserORM
 from src.app.infrastructure.db import Database, get_db
-from src.app.infrastructure.models import UserORM
 from src.config import Settings, get_settings
 from src.app.main import app
 

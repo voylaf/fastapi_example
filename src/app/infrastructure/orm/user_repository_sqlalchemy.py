@@ -3,10 +3,9 @@ from typing import cast, Optional, List
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import Session
 
-from src.app.infrastructure import models
-from src.app.infrastructure.models import UserORM
+from src.app.infrastructure.models.user import UserORM
 from src.app.application.auth import get_password_hash
-from src.app.domain.user_repository import UserRepository
+from src.app.infrastructure.repositories.user_repository import UserRepository
 from src.app.interfaces import schemas
 from src.app.application.auth import verify_password
 
@@ -29,7 +28,7 @@ class UserRepositorySQLAlchemy(UserRepository):
     def authenticate_user(self, email: str, password: str) -> Optional[UserORM]:
         user: Optional[UserORM] = (
             self.db.query(UserORM)
-            .filter(cast(ColumnElement[bool], models.UserORM.email == email))
+            .filter(cast(ColumnElement[bool], UserORM.email == email))
             .first()
         )
         if not user:

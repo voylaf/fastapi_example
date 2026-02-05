@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List, Dict, Tuple
 from uuid import UUID
 
@@ -6,16 +7,17 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette import status
 
-from config import Settings, get_settings
+from src.config import Settings, get_settings
 from src.app.application.auth import create_access_token
 from src.app.application.deps import get_current_user
-from src.app.application.item_service import ItemService
-from src.app.application.user_service import UserService
+from src.app.services.item_service import ItemService
+from src.app.services.user_service import UserService
 from src.app.infrastructure.db import get_db
-from src.app.infrastructure.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
+from src.app.infrastructure.orm.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
 from src.app.interfaces.schemas import ItemCreate, ItemResponse, UserResponse, UserCreate
-from src.app.infrastructure.models import UserORM, ItemORM
-from src.app.infrastructure.user_repository_sqlalchemy import UserRepositorySQLAlchemy
+from src.app.infrastructure.models.item import ItemORM
+from src.app.infrastructure.models.user import UserORM
+from src.app.infrastructure.orm.user_repository_sqlalchemy import UserRepositorySQLAlchemy
 
 router = APIRouter()
 
@@ -30,7 +32,7 @@ async def create_item(
     service = ItemService(repo)
     owner_id = current_user.id
     item_with_id: Tuple[UUID, ItemORM] = await service.create_item(
-        item.name, item.price, item.tax, owner_id
+        item.name, Decimal(item.price), item.tax, owner_id
     )
     item_id, new_item = item_with_id
     return ItemResponse(id=item_id, owner_id=owner_id, **item.model_dump())

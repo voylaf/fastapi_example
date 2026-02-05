@@ -7,8 +7,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.app.infrastructure.db import Base
-from src.app.infrastructure.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
-from src.app.infrastructure.models import ItemORM
+from orm.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
+from src.app.infrastructure.models.item import ItemORM
 
 
 # Генерируем случайные Item

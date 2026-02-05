@@ -5,9 +5,9 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import ColumnElement
 from sqlalchemy.orm import Session
 
-from config import Settings, get_settings
+from src.config import Settings, get_settings
+from src.app.infrastructure.models.user import UserORM
 from src.app.application import auth
-from src.app.infrastructure import models
 from src.app.infrastructure.db import get_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -17,7 +17,7 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
-) -> models.UserORM:
+) -> UserORM:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -27,9 +27,9 @@ async def get_current_user(
 
     if token_data is None:
         raise credentials_exception
-    user_orm: Optional[models.UserORM] = (
-        db.query(models.UserORM)
-        .filter(cast(ColumnElement[bool], models.UserORM.id == token_data.user_id))
+    user_orm: Optional[UserORM] = (
+        db.query(UserORM)
+        .filter(cast(ColumnElement[bool], UserORM.id == token_data.user_id))
         .first()
     )
     if user_orm is None:

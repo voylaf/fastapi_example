@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple
 
-from src.app.infrastructure.models import UserORM
+from src.app.infrastructure.models import user
 from src.app.interfaces.schemas import UserCreate
 
 

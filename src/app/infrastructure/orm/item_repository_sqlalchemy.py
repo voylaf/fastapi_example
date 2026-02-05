@@ -4,9 +4,8 @@ from uuid import UUID
 from fastapi import HTTPException
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import Session
-from src.app.domain.item import Item
-from src.app.domain.item_repository import ItemRepository
-from src.app.infrastructure.models import ItemORM
+from src.app.infrastructure.repositories.item_repository import ItemRepository
+from src.app.infrastructure.models.item import ItemORM
 
 
 class ItemRepositorySQLAlchemy(ItemRepository):
@@ -15,18 +14,12 @@ class ItemRepositorySQLAlchemy(ItemRepository):
             raise HTTPException(status_code=404, detail="database not found")
         self.db = db
 
-    def add(self, item: Item, owner_id: UUID) -> Tuple[UUID, ItemORM]:
-        orm = ItemORM(
-            name=item.name,
-            price=item.price,
-            tax=item.tax,
-            description=item.description,
-            owner_id=owner_id,
-        )
-        self.db.add(orm)
+    def add(self, item: ItemORM, owner_id: UUID) -> Tuple[UUID, ItemORM]:
+        item.owner_id = owner_id
+        self.db.add(item)
         self.db.commit()
-        self.db.refresh(orm)
-        return orm.id, orm
+        self.db.refresh(item)
+        return item.id, item
 
     def get(self, item_id: UUID) -> Optional[ItemORM]:
         orm = (

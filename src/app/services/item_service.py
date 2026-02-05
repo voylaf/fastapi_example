@@ -1,9 +1,11 @@
+from decimal import Decimal
 from typing import List, Tuple, Optional
 from uuid import UUID
 
 from src.app.domain.item import Item
-from src.app.domain.item_repository import ItemRepository
-from src.app.infrastructure.models import ItemORM
+from src.app.infrastructure.repositories.item_repository import ItemRepository
+from src.app.infrastructure.models.item import ItemORM
+from src.app.infrastructure.mappers.item import to_model
 
 
 class ItemService:
@@ -11,10 +13,11 @@ class ItemService:
         self.repo = repo
 
     async def create_item(
-        self, name: str, price: float, tax: Optional[float], owner_id: Optional[UUID]
+        self, name: str, price: Decimal, tax: Optional[Decimal], owner_id: Optional[UUID]
     ) -> Tuple[UUID, ItemORM]:
-        item = Item(name=name, price=price, tax=tax)
-        return self.repo.add(item, owner_id)
+        item = Item(name, price, tax)
+        itemORM = to_model(item)
+        return self.repo.add(itemORM, owner_id)
 
     async def get_item(self, item_id: UUID) -> Optional[ItemORM]:
         return self.repo.get(item_id)
