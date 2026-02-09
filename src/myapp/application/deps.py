@@ -1,14 +1,13 @@
-from typing import cast, Optional
+from typing import cast, Optional, Any, Generator
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy import ColumnElement
-from sqlalchemy.orm import Session
+from sqlalchemy import ColumnElement, create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from src.config import Settings
 from src.myapp.infrastructure.models.user import UserORM
 from src.myapp.application import auth
-from src.myapp.infrastructure.db import Database
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -17,9 +16,19 @@ def get_settings() -> Settings:
     return Settings()
 
 
-def get_db(settings: Settings = Depends(get_settings)):
-    db = Database(settings=settings)
-    return db.get_db()
+def get_db(settings: Settings = Depends(get_settings)) -> Generator[Session, None, None]:
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args=settings.connect_args or {},
+    )
+    SessionLocal = sessionmaker(bind=engine)
+
+    db = SessionLocal()
+    assert isinstance(db, Session)
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 def get_current_user(

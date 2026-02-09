@@ -10,6 +10,8 @@ from src.myapp.infrastructure.models.item import ItemORM
 
 class ItemRepositorySQLAlchemy(ItemRepository):
     def __init__(self, db: Session):
+        if not isinstance(db, Session):
+            raise RuntimeError(f"Expected Session, got {type(db)}")
         if db is None:
             raise HTTPException(status_code=404, detail="database not found")
         self.db = db

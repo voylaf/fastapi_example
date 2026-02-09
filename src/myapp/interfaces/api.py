@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import List, Dict, Tuple
 from uuid import UUID
 
@@ -31,7 +30,7 @@ def create_item(
     service = ItemService(repo)
     owner_id = current_user.id
     item_with_id: Tuple[UUID, ItemORM] = service.create_item(
-        item.name, Decimal(item.price), item.tax, owner_id
+        item.name, item.price, item.tax, owner_id
     )
     item_id, new_item = item_with_id
     return ItemResponse(id=item_id, owner_id=owner_id, **item.model_dump())
