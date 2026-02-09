@@ -1,8 +1,4 @@
-from sqlalchemy import create_engine, NullPool
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.orm import registry
-
-from src.config import Settings
+from sqlalchemy.orm import Session, registry, sessionmaker
 
 mapper_registry = registry()
 Base = mapper_registry.generate_base()
@@ -13,7 +9,6 @@ def get_session_factory(engine) -> sessionmaker[Session]:
 
 
 class Database:
-
     def __init__(self, engine):
         self.SessionLocal = sessionmaker(bind=engine)
 

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     CONNECT_ARGS: Optional[str] = None
 
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     @property
     def connect_args(self) -> dict:

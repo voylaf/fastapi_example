@@ -1,9 +1,8 @@
 from decimal import Decimal
+from typing import Annotated, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, EmailStr
-from typing import Optional, Annotated
-
+from pydantic import BaseModel, EmailStr, Field
 from regex import regex
 
 # API-контракты
@@ -52,7 +51,8 @@ class UserCreate(BaseModel):
                 r"""^[\p{L}0-9~!?@#$%^&*_\-+()\[\]{}></|\"'.,:;]{12,128}$"""
             ).pattern,
         ),
-        """Minimal length of password is between 12 and 128 symbols. It may contain letters, numbers and special characters: ~!?@#$%^&*_-+"'()[]{}></|.,:;""",
+        """Minimal length of password is between 12 and 128 symbols. 
+        It may contain letters, numbers and special characters: ~!?@#$%^&*_-+"'()[]{}></|.,:;""",
     ]
     role: str = "user"
 

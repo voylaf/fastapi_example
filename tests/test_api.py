@@ -25,17 +25,20 @@ def test_create_item_success(client, auth_headers):
     assert data["name"] == "Mouse"
     assert "id" in data
 
+
 def test_create_item_without_description(client, auth_headers):
     payload = {"name": "Mouse2", "price": 50.0, "tax": 5.0}
     response = client.post("/items", json=payload, headers=auth_headers)
 
     assert response.status_code == 200
 
+
 def test_create_item_without_price_fails(client, auth_headers):
     payload = {"name": "NoPrice", "tax": 5.0}
     response = client.post("/items", json=payload, headers=auth_headers)
 
     assert response.status_code == 422
+
 
 def test_create_item_without_tax(client, auth_headers):
     payload = {"name": "NoTax", "price": 50.0}

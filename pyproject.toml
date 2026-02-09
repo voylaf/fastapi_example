@@ -33,20 +33,37 @@ package = false
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.black]
-line-length = 100
-skip-string-normalization = true
-target-version = ["py314"]
-include = '\.pyi?$'         # format only .py и .pyi
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | \.venv
-  | build
-  | dist
-)/
-'''
-
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+[tool.ruff]
+src = ["src"]
+line-length = 100
+indent-width = 4
+target-version = "py314"
+
+exclude = [
+    "git",
+    "mypy_cache",
+    "venv",
+    "build",
+    "dist",
+    "src/tests/**"
+]
+
+[tool.ruff.lint]
+select = [
+    "RET",
+    "E",
+    "F",
+    "I",
+    "TID",
+    "FAST",
+]
+
+fixable = [
+    "I", # import sorting
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"

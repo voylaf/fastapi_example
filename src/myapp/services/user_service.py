@@ -1,8 +1,8 @@
-from typing import Tuple, Optional, List
+from typing import List, Optional, Tuple
 
-from src.myapp.infrastructure.repositories.user_repository import UserRepository
-from src.myapp.infrastructure.models.user import UserORM
 from src.myapp.domain.user import User
+from src.myapp.infrastructure.models.user import UserORM
+from src.myapp.infrastructure.repositories.user_repository import UserRepository
 from src.myapp.interfaces.schemas import UserCreate
 
 
@@ -11,7 +11,7 @@ class UserService:
         self.repo = repo
 
     def create_user(
-        self, email: str, password: str, full_name: Optional[str], role: str = 'user'
+        self, email: str, password: str, full_name: Optional[str], role: str = "user"
     ) -> Tuple[str, UserORM]:
         user = UserCreate(email=email, password=password, full_name=full_name, role=role)
         return self.repo.create_user(user)

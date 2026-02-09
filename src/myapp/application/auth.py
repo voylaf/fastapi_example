@@ -3,8 +3,8 @@ from typing import Optional
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from src.config import Settings
 
+from src.config import Settings
 from src.myapp.interfaces.schemas import TokenData
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -31,8 +31,7 @@ def create_access_token(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
     to_encode.update({"exp": expire})
-    token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-    return token
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 def decode_access_token(

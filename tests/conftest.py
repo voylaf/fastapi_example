@@ -4,12 +4,11 @@ from typing import Any, Generator
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import StaticPool, create_engine
-from sqlalchemy.orm import sessionmaker, Session
-
-from src.myapp.application.deps import get_db, get_settings
-from src.myapp.infrastructure.models.user import UserORM
-from src.myapp.infrastructure.db import Base
+from sqlalchemy.orm import Session, sessionmaker
 from src.config import Settings
+from src.myapp.application.deps import get_db, get_settings
+from src.myapp.infrastructure.db import Base
+from src.myapp.infrastructure.models.user import UserORM
 from src.myapp.main import app
 
 

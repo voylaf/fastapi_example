@@ -1,4 +1,4 @@
-from typing import cast, Optional, Any, Generator
+from typing import Generator, Optional, cast
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -6,8 +6,8 @@ from sqlalchemy import ColumnElement, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from src.config import Settings
-from src.myapp.infrastructure.models.user import UserORM
 from src.myapp.application import auth
+from src.myapp.infrastructure.models.user import UserORM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -52,5 +52,4 @@ def get_current_user(
     )
     if user_orm is None:
         raise credentials_exception
-    else:
-        return user_orm
+    return user_orm

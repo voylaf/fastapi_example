@@ -1,7 +1,8 @@
-from sqlalchemy import Column, String, Numeric, ForeignKey, DateTime, func
+import uuid
+
+from sqlalchemy import Column, DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-import uuid
 
 from src.myapp.infrastructure.db import Base
 
@@ -19,4 +20,3 @@ class ItemORM(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
 
     owner = relationship("UserORM", back_populates="items")
-

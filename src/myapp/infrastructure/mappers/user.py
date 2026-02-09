@@ -1,7 +1,8 @@
 from dataclasses import asdict
 
-from src.myapp.infrastructure.models.user import UserORM
 from user import User
+
+from src.myapp.infrastructure.models.user import UserORM
 
 
 def to_domain(model: UserORM) -> User:

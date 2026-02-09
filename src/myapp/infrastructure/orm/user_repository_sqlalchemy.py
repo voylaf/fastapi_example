@@ -1,13 +1,12 @@
-from typing import cast, Optional, List
+from typing import List, Optional, cast
 
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import Session
 
+from src.myapp.application.auth import get_password_hash, verify_password
 from src.myapp.infrastructure.models.user import UserORM
-from src.myapp.application.auth import get_password_hash
 from src.myapp.infrastructure.repositories.user_repository import UserRepository
 from src.myapp.interfaces import schemas
-from src.myapp.application.auth import verify_password
 
 
 class UserRepositorySQLAlchemy(UserRepository):
@@ -16,10 +15,12 @@ class UserRepositorySQLAlchemy(UserRepository):
 
     def create_user(self, user_create: schemas.UserCreate) -> UserORM:
         hashed_password = get_password_hash(user_create.password)
-        user = UserORM(email=user_create.email,
-                       hashed_password=hashed_password,
-                       full_name=user_create.full_name,
-                       role=user_create.role)
+        user = UserORM(
+            email=user_create.email,
+            hashed_password=hashed_password,
+            full_name=user_create.full_name,
+            role=user_create.role,
+        )
         self.db.add(user)
         self.db.commit()
         self.db.refresh(user)
@@ -27,9 +28,7 @@ class UserRepositorySQLAlchemy(UserRepository):
 
     def authenticate_user(self, email: str, password: str) -> Optional[UserORM]:
         user: Optional[UserORM] = (
-            self.db.query(UserORM)
-            .filter(cast(ColumnElement[bool], UserORM.email == email))
-            .first()
+            self.db.query(UserORM).filter(cast(ColumnElement[bool], UserORM.email == email)).first()
         )
         if not user:
             return None
