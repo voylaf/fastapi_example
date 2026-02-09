@@ -1,23 +1,23 @@
 from typing import Tuple, Optional, List
 
-from src.app.infrastructure.repositories.user_repository import UserRepository
-from src.app.infrastructure.models.user import UserORM
-from src.app.domain.user import User
-from src.app.interfaces.schemas import UserCreate
+from src.myapp.infrastructure.repositories.user_repository import UserRepository
+from src.myapp.infrastructure.models.user import UserORM
+from src.myapp.domain.user import User
+from src.myapp.interfaces.schemas import UserCreate
 
 
 class UserService:
     def __init__(self, repo: UserRepository):
         self.repo = repo
 
-    async def create_user(
+    def create_user(
         self, email: str, password: str, full_name: Optional[str], role: str = 'user'
     ) -> Tuple[str, UserORM]:
         user = UserCreate(email=email, password=password, full_name=full_name, role=role)
         return self.repo.create_user(user)
 
-    async def authenticate_user(self, email: str, password: str) -> Optional[UserORM]:
+    def authenticate_user(self, email: str, password: str) -> Optional[UserORM]:
         return self.repo.authenticate_user(email, password)
 
-    async def list_items(self) -> List[User]:
+    def list_items(self) -> List[User]:
         return self.repo.list()

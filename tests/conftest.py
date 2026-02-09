@@ -1,42 +1,66 @@
+import os
 from typing import Any, Generator
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import StaticPool
-from sqlalchemy.orm import Session
+from sqlalchemy import StaticPool, create_engine
+from sqlalchemy.orm import sessionmaker, Session
 
-from src.app.infrastructure.models.user import UserORM
-from src.app.infrastructure.db import Database, get_db
-from src.config import Settings, get_settings
-from src.app.main import app
+from src.myapp.application.deps import get_db, get_settings
+from src.myapp.infrastructure.models.user import UserORM
+from src.myapp.infrastructure.db import Base
+from src.config import Settings
+from src.myapp.main import app
+
+
+@pytest.fixture(scope="session")
+def test_settings():
+    """Фейковые настройки для тестов"""
+    os.environ["SECRET_KEY"] = "tests-secret"
+    os.environ["ALGORITHM"] = "HS256"
+    os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"] = "5"
+    os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+    os.environ["CONNECT_ARGS"] = '{"check_same_thread": false}'
+
+    # можно создавать отдельный экземпляр Settings
+    return Settings()
+
+
+@pytest.fixture(scope="session")
+def engine(test_settings):
+    engine = create_engine(
+        test_settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(bind=engine)
+    yield engine
+    Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(scope="function")
-def test_db(test_settings) -> Generator[Session, Any, None]:
-    """In-memory SQLite для тестов"""
-    db = Database(
-        settings=test_settings,
-        echo=False,
-        pool_class=StaticPool,
-    )
-    db.create_all()
-    session = db.create_session()
+def test_db(engine) -> Generator[Session, Any, None]:
+    connection = engine.connect()
+    transaction = connection.begin()
+
+    SessionLocal = sessionmaker(bind=connection)
+    session = SessionLocal()
+
     try:
         yield session
     finally:
         session.close()
+        transaction.rollback()
+        connection.close()
 
 
 @pytest.fixture(scope="function")
 def client(test_settings, test_db):
 
-    def override_get_db():
-        try:
-            yield test_db
-        finally:
-            test_db.close()
+    def override_get_db() -> Generator[Session, Any, None]:
+        yield test_db
 
-    app.dependency_overrides[get_settings] = lambda x: test_settings
+    app.dependency_overrides[get_settings] = lambda: test_settings
     app.dependency_overrides[get_db] = override_get_db
 
     with TestClient(app) as c:
@@ -57,19 +81,6 @@ def user_factory(client):
 
 
 @pytest.fixture(scope="function")
-def test_settings(monkeypatch):
-    """Фейковые настройки для тестов"""
-    monkeypatch.setenv("SECRET_KEY", "tests-secret")
-    monkeypatch.setenv("ALGORITHM", "HS256")
-    monkeypatch.setenv("ACCESS_TOKEN_EXPIRE_MINUTES", "5")
-    monkeypatch.setenv("DATABASE_URL", "sqlite:///:memory:")
-    monkeypatch.setenv("CONNECT_ARGS", '{"check_same_thread": false}')
-
-    # можно создавать отдельный экземпляр Settings
-    return Settings()
-
-
-@pytest.fixture(scope="function")
 def auth_token(user_factory, client):
     email = "aa@g.com"
     password = "lkjsaoiwhghb%iog535bajb"
@@ -78,6 +89,7 @@ def auth_token(user_factory, client):
     _ = user_factory(email, password, full_name)
     response = client.post("/auth/login", data={"username": email, "password": password})
     return response.json()
+
 
 @pytest.fixture(scope="function")
 def auth_headers(auth_token, client):

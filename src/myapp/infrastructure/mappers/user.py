@@ -1,6 +1,6 @@
 from dataclasses import asdict
 
-from src.app.infrastructure.models.user import UserORM
+from src.myapp.infrastructure.models.user import UserORM
 from user import User
 
 

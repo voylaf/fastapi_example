@@ -18,7 +18,3 @@ class Settings(BaseSettings):
         if self.CONNECT_ARGS:
             return json.loads(self.CONNECT_ARGS)
         return {}
-
-
-def get_settings() -> Settings:
-    return Settings()

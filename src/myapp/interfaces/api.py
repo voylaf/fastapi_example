@@ -7,23 +7,22 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette import status
 
-from src.config import Settings, get_settings
-from src.app.application.auth import create_access_token
-from src.app.application.deps import get_current_user
-from src.app.services.item_service import ItemService
-from src.app.services.user_service import UserService
-from src.app.infrastructure.db import get_db
-from src.app.infrastructure.orm.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
-from src.app.interfaces.schemas import ItemCreate, ItemResponse, UserResponse, UserCreate
-from src.app.infrastructure.models.item import ItemORM
-from src.app.infrastructure.models.user import UserORM
-from src.app.infrastructure.orm.user_repository_sqlalchemy import UserRepositorySQLAlchemy
+from src.config import Settings
+from src.myapp.application.auth import create_access_token
+from src.myapp.application.deps import get_current_user, get_db, get_settings
+from src.myapp.services.item_service import ItemService
+from src.myapp.services.user_service import UserService
+from src.myapp.infrastructure.orm.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
+from src.myapp.interfaces.schemas import ItemCreate, ItemResponse, UserResponse, UserCreate
+from src.myapp.infrastructure.models.item import ItemORM
+from src.myapp.infrastructure.models.user import UserORM
+from src.myapp.infrastructure.orm.user_repository_sqlalchemy import UserRepositorySQLAlchemy
 
 router = APIRouter()
 
 
 @router.post("/items", response_model=ItemResponse)
-async def create_item(
+def create_item(
     item: ItemCreate,
     db: Session = Depends(get_db),
     current_user: UserORM = Depends(get_current_user),
@@ -31,7 +30,7 @@ async def create_item(
     repo = ItemRepositorySQLAlchemy(db)
     service = ItemService(repo)
     owner_id = current_user.id
-    item_with_id: Tuple[UUID, ItemORM] = await service.create_item(
+    item_with_id: Tuple[UUID, ItemORM] = service.create_item(
         item.name, Decimal(item.price), item.tax, owner_id
     )
     item_id, new_item = item_with_id
@@ -39,30 +38,30 @@ async def create_item(
 
 
 @router.get("/items", response_model=List[ItemResponse])
-async def get_items(db: Session = Depends(get_db)) -> List[ItemORM]:
+def get_items(db: Session = Depends(get_db)) -> List[ItemORM]:
     repo = ItemRepositorySQLAlchemy(db)
     service = ItemService(repo)
-    items = await service.list_items()
+    items = service.list_items()
     return items
 
 
 @router.post("/auth/register", response_model=UserResponse)
-async def create_user(user: UserCreate, db: Session = Depends(get_db)) -> Tuple[str, UserORM]:
+def create_user(user: UserCreate, db: Session = Depends(get_db)) -> Tuple[str, UserORM]:
     repo = UserRepositorySQLAlchemy(db)
     service = UserService(repo)
-    result = await service.create_user(user.email, user.password, user.full_name, user.role)
+    result = service.create_user(user.email, user.password, user.full_name, user.role)
     return result
 
 
 @router.post("/auth/login", response_model=Dict)
-async def authenticate_user(
+def authenticate_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ):
     repo = UserRepositorySQLAlchemy(db)
     service = UserService(repo)
-    user: UserORM = await service.authenticate_user(form_data.username, form_data.password)
+    user: UserORM = service.authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

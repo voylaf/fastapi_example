@@ -1,9 +1,8 @@
-from fastapi import Depends
 from sqlalchemy import create_engine, NullPool
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.orm import registry
 
-from src.config import Settings, get_settings
+from src.config import Settings
 
 mapper_registry = registry()
 Base = mapper_registry.generate_base()
@@ -47,8 +46,3 @@ class Database:
 # default_db = Database(
 #     settings=get_settings(),
 # )
-
-
-def get_db(settings: Settings=Depends(get_settings)):
-    db = Database(settings=settings)
-    return db.get_db()

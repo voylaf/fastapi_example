@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from src.config import Settings
 
-from src.app.interfaces.schemas import TokenData
+from src.myapp.interfaces.schemas import TokenData
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

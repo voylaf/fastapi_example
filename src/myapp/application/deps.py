@@ -5,15 +5,24 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import ColumnElement
 from sqlalchemy.orm import Session
 
-from src.config import Settings, get_settings
-from src.app.infrastructure.models.user import UserORM
-from src.app.application import auth
-from src.app.infrastructure.db import get_db
+from src.config import Settings
+from src.myapp.infrastructure.models.user import UserORM
+from src.myapp.application import auth
+from src.myapp.infrastructure.db import Database
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
-async def get_current_user(
+def get_settings() -> Settings:
+    return Settings()
+
+
+def get_db(settings: Settings = Depends(get_settings)):
+    db = Database(settings=settings)
+    return db.get_db()
+
+
+def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),

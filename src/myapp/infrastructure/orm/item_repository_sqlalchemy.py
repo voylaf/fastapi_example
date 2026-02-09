@@ -4,8 +4,8 @@ from uuid import UUID
 from fastapi import HTTPException
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.orm import Session
-from src.app.infrastructure.repositories.item_repository import ItemRepository
-from src.app.infrastructure.models.item import ItemORM
+from src.myapp.infrastructure.repositories.item_repository import ItemRepository
+from src.myapp.infrastructure.models.item import ItemORM
 
 
 class ItemRepositorySQLAlchemy(ItemRepository):

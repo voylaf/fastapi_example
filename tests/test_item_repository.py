@@ -6,9 +6,9 @@ import hypothesis.strategies as st
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.app.infrastructure.db import Base
+from src.myapp.infrastructure.db import Base
 from orm.item_repository_sqlalchemy import ItemRepositorySQLAlchemy
-from src.app.infrastructure.models.item import ItemORM
+from src.myapp.infrastructure.models.item import ItemORM
 
 
 # Генерируем случайные Item

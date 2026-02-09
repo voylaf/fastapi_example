@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.app.interfaces import api
+from src.myapp.interfaces import api
 
 
 def create_app():

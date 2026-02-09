@@ -1,6 +1,6 @@
 from dataclasses import asdict
-from src.app.domain.item import Item
-from src.app.infrastructure.models.item import ItemORM
+from src.myapp.domain.item import Item
+from src.myapp.infrastructure.models.item import ItemORM
 
 
 def to_domain(model: ItemORM) -> Item:
