@@ -1,11 +1,8 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "fastapi_example"
-description = 'fastapi example project'
-authors = [{name = 'voylaf'}]
+version = "0.0.1"
+description = "fastapi example project"
+authors = [{ name = "voylaf" }]
 requires-python = ">=3.14"
 dependencies = [
     "pydantic",
@@ -26,14 +23,21 @@ dependencies = [
     "black (>=26.1.0,<27.0.0)",
 ]
 
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+package = false
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.black]
-line-length = 100           # длина строки
-skip-string-normalization = true  # не трогать кавычки
-target-version = ["py314"]  # версия Python
-include = '\.pyi?$'         # форматировать только .py и .pyi
+line-length = 100
+skip-string-normalization = true
+target-version = ["py314"]
+include = '\.pyi?$'         # format only .py и .pyi
 exclude = '''
 /(
     \.git
@@ -46,6 +50,3 @@ exclude = '''
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
-
-[tool.poetry]
-package-mode = false
